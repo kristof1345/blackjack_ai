@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"blackjack"
+	"fmt"
+)
 
 func main() {
-	fmt.Println("srnb")
+	game := blackjack.New()
+	winnings := game.Play(blackjack.HumanAI())
+	fmt.Println(winnings)
 }
