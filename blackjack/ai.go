@@ -15,7 +15,7 @@ type AI interface {
 type dealerAI struct{}
 
 func (ai dealerAI) Bet(shuffled bool) int {
-	//noop
+	// noop
 	return 1
 }
 
@@ -28,7 +28,7 @@ func (ai dealerAI) Play(hand []cards.Card, dealer cards.Card) Move {
 }
 
 func (ai dealerAI) Results(hands [][]cards.Card, dealer []cards.Card) {
-	//noop
+	// noop
 }
 
 func HumanAI() AI {
@@ -38,9 +38,8 @@ func HumanAI() AI {
 type humanAI struct{}
 
 func (ai humanAI) Bet(shuffled bool) int {
-	fmt.Println()
 	if shuffled {
-		fmt.Println("The deck was just shuffled!")
+		fmt.Println("The deck was just shuffled.")
 	}
 	fmt.Println("What would you like to bet?")
 	var bet int
