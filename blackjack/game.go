@@ -1,8 +1,6 @@
 package blackjack
 
 import (
-	"fmt"
-
 	"github.com/kristof1345/cards"
 )
 
@@ -97,7 +95,10 @@ func (g *Game) Play(ai AI) int {
 		}
 		bet(g, ai, shuffled)
 		deal(g)
-
+		if Blackjack(g.dealer...) {
+			endHand(g, ai)
+			continue
+		}
 		for g.state == statePlayerTurn {
 			hand := make([]cards.Card, len(g.player))
 			copy(hand, g.player)
@@ -137,24 +138,27 @@ func draw(deck []cards.Card) (cards.Card, []cards.Card) {
 
 func endHand(g *Game, ai AI) {
 	pScore, dScore := Score(g.player...), Score(g.dealer...)
+	pBlackjack, dBlackjack := Blackjack(g.player...), Blackjack(g.dealer...)
 	winnings := g.playerBet
 	switch {
+	case pBlackjack && dBlackjack:
+		winnings = 0
+	case dBlackjack:
+		winnings = -winnings
+	case pBlackjack:
+		winnings = int(float64(winnings) * g.blackjackPayout)
 	case pScore > 21:
-		fmt.Println("You busted")
 		winnings = -winnings
 	case dScore > 21:
-		fmt.Println("Dealer busted")
+		//win
 	case pScore > dScore:
-		fmt.Println("You win!")
+		//win
 	case dScore > pScore:
-		fmt.Println("You lose!")
 		winnings = -winnings
 	case dScore == pScore:
-		fmt.Println("Draw")
 		winnings = 0
 	}
 	g.balance += winnings
-	fmt.Println()
 	ai.Results([][]cards.Card{g.player}, g.dealer)
 	g.player = nil
 	g.dealer = nil
@@ -171,6 +175,10 @@ func Score(hand ...cards.Card) int {
 		}
 	}
 	return minScore
+}
+
+func Blackjack(hand ...cards.Card) bool {
+	return len(hand) == 2 && Score(hand...) == 21
 }
 
 func Soft(hand ...cards.Card) bool {
